@@ -21,10 +21,13 @@ def generate_launch_description():
         launch_arguments={'use_sim_time': 'true'}.items()
     )
 
+    gazebo_params_file = os.path.join(get_package_share_directory(package_name), 'config', 'gazebo_params.yaml')
+
     # Gazebo (now often referred to as GZ) launch description using ros_gz_sim
     gazebo = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(
                     get_package_share_directory('gazebo_ros'), 'launch', 'gazebo.launch.py')]),
+                    launch_arguments={'extra_gazebo_args': '--ros-args --params-file' + gazebo_params_file }.items()
     )
 
     # Spawn Entity in Gazebo using ros_gz_sim's create tool
@@ -32,9 +35,24 @@ def generate_launch_description():
         arguments=['-entity', 'chunkbot_h',
             '-topic', 'robot_description'],
         output='screen')
+    
+    diff_drive_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['diff_cont'],
+    )
+
+    joint_broad_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['joint_broad'],
+    )
+
 
     return LaunchDescription([
         rsp,
         gazebo,
-        spawn_entity
+        spawn_entity,
+        diff_drive_spawner,
+        joint_broad_spawner
     ])

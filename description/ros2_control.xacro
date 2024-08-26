@@ -25,7 +25,7 @@
 
     <gazebo>
         <plugin name='gazebo_ros2_control' filename='libgazebo_ros2_control.so'>
-            <parameters></parameters>
+            <parameters>$(find chunkbot_h)/config/my_controllers.yaml</parameters>
         </plugin>
     </gazebo>
 
